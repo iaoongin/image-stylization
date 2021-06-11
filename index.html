@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Image Stylizaton</title>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.7.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
 
@@ -12,7 +12,7 @@
         height: 200px;
       }
 
-      .inputDiv{
+      .inputDiv {
         display: flex;
       }
     </style>
@@ -21,9 +21,9 @@
   <body>
     <div>
       <div>
-        <h2>form</h2>
-       width: <input id="outSize" type="number" value="200" />
-        <button id="execute">execute</button>
+        <h2>width</h2>
+        <input id="outSize" type="number" value="200" />
+        <button id="execute" disabled>generate</button>
       </div>
 
       <div class="inputDiv">
@@ -46,6 +46,7 @@
 
       <div>
         <h2>stylized</h2>
+        
         <canvas id="stylizedCanvas" width="512" height="512"> </canvas>
       </div>
     </div>
@@ -77,31 +78,39 @@
         document
           .getElementById("execute")
           .addEventListener("click", (e) => execute(model));
+
+        $("#execute").removeAttr("disabled");
       });
 
       function execute(model) {
         clearCanvas(stylizedCanvas);
 
-        try {
-          let outSize = document.getElementById("outSize").value;
+        $("#execute").attr("disabled", "disabled");
 
-          let tf_style = load_img(style, outSize);
-          let tf_content = load_img(content, outSize);
+        setTimeout(() => {
+          try {
+            let outSize = document.getElementById("outSize").value;
 
-          console.log("tf_style", tf_style);
-          console.log("tf_content", tf_content);
+            let tf_style = load_img(style, outSize);
+            let tf_content = load_img(content, outSize);
 
-          let stylized_image = model.execute([tf_style, tf_content]);
-          // stylized_image = model.execute([tf_content, tf_style, ]);
+            console.log("tf_style", tf_style);
+            console.log("tf_content", tf_content);
 
-          console.log("stylized_image", stylized_image);
-          let toPixelsPromise = tf.browser.toPixels(
-            tensor_to_image(stylized_image),
-            stylizedCanvas
-          );
-        } catch (e) {
-          alert(e);
-        }
+            let stylized_image = model.execute([tf_style, tf_content]);
+            // stylized_image = model.execute([tf_content, tf_style, ]);
+
+            console.log("stylized_image", stylized_image);
+            let toPixelsPromise = tf.browser.toPixels(
+              tensor_to_image(stylized_image),
+              stylizedCanvas
+            );
+
+            toPixelsPromise.finally(() => $("#execute").removeAttr("disabled"));
+          } catch (e) {
+            alert(e);
+          }
+        }, 100);
 
         // toPixelsPromise.then(resp => {
         //     console.log(resp)
