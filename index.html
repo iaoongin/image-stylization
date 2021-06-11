@@ -46,7 +46,7 @@
 
       <div>
         <h2>stylized</h2>
-        
+
         <canvas id="stylizedCanvas" width="512" height="512"> </canvas>
       </div>
     </div>
@@ -79,13 +79,13 @@
           .getElementById("execute")
           .addEventListener("click", (e) => execute(model));
 
-        $("#execute").removeAttr("disabled");
+        removeLoading();
       });
 
       function execute(model) {
         clearCanvas(stylizedCanvas);
 
-        $("#execute").attr("disabled", "disabled");
+        addLoading();
 
         setTimeout(() => {
           try {
@@ -106,9 +106,10 @@
               stylizedCanvas
             );
 
-            toPixelsPromise.finally(() => $("#execute").removeAttr("disabled"));
+            toPixelsPromise.finally(() => removeLoading());
           } catch (e) {
             alert(e);
+            removeLoading();
           }
         }, 100);
 
@@ -120,6 +121,14 @@
         //     var ctx = stylizedCanvas.getContext("2d");
         //     ctx.putImageData(imageData, 0, 0);
         // })
+      }
+
+      function addLoading() {
+        $("#execute").attr("disabled", "disabled");
+      }
+
+      function removeLoading() {
+        $("#execute").removeAttr("disabled");
       }
 
       /**
