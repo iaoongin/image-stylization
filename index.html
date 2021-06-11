@@ -89,6 +89,7 @@
       console.log(MODEL_URL);
       const modelPromise = tf.loadGraphModel(MODEL_URL);
 
+      addLoading('loading model...')
       modelPromise.then((model) => {
         // const cat = document.getElementById('cat');
         console.log("model", model);
@@ -100,9 +101,12 @@
       });
 
       function execute(model) {
+
+
+        addLoading('generating ...')
         clearCanvas(stylizedCanvas);
 
-        addLoading();
+        
 
         setTimeout(() => {
           try {
@@ -140,12 +144,14 @@
         // })
       }
 
-      function addLoading() {
+      function addLoading(msg) {
         $("#execute").attr("disabled", "disabled");
+        $("#execute").html( msg || "loading...");
       }
 
       function removeLoading() {
         $("#execute").removeAttr("disabled");
+        $("#execute").html("generate");
       }
 
       /**
