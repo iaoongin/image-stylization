@@ -13,7 +13,24 @@
       }
 
       .inputDiv {
-        display: flex;
+        width: 100%;
+      }
+
+      @media screen and (min-width: 980px) {
+        .inputDiv {
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
+        }
+      }
+
+      .inputDiv > div {
+        /* width: 50%; */
+        margin: 0 5px;
+      }
+
+      .inputDiv input {
+        display: block;
       }
     </style>
   </head>
