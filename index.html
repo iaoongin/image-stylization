@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.7.0/dist/tf.min.js"></script>
+    <style>
+        img {
+            height: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div>
+            <input id='outSize' type="number" value="200" />
+            <button id="execute">执行</button>
+        </div>
+        <div>
+            <h2>style</h2>
+            <img id="style" src="static/images/Vassily_Kandinsky,_1913_-_Composition_7.jpg" />
+            <!-- <img id="style" src="static/images/style.png" /> -->
+        </div>
+
+        <div>
+            <h2>content</h2>
+            <img id="content" src="static/images/content.jpg" />
+        </div>
+
+        <div>
+            <h2>stylized</h2>
+            <canvas id="stylizedCanvas" width="512" height="512"> </canvas>
+        </div>
+    </div>
+    <script>
+        const MODEL_URL = 'static/models/arbitrary-image-stylization-v1-256/2/model.json';
+
+        const style = document.getElementById('style');
+        const content = document.getElementById('content');
+        const stylized = document.getElementById('stylized');
+        const stylizedCanvas = document.getElementById('stylizedCanvas');
+
+
+        console.log(MODEL_URL)
+        const modelPromise = tf.loadGraphModel(MODEL_URL);
+
+        modelPromise.then(model => {
+            // const cat = document.getElementById('cat');
+            console.log('model', model)
+            document.getElementById('execute').addEventListener('click', (e) => execute(model))
+        })
+
+        function execute(model) {
+
+            clearCanvas(stylizedCanvas)
+
+            try {
+                let outSize = document.getElementById('outSize').value
+
+
+                let tf_style = load_img(style, outSize)
+                let tf_content = load_img(content, outSize)
+
+                console.log('tf_style', tf_style);
+                console.log('tf_content', tf_content);
+
+                let stylized_image = model.execute([tf_style, tf_content]);
+                // stylized_image = model.execute([tf_content, tf_style, ]);
+
+                console.log('stylized_image', stylized_image)
+                let toPixelsPromise = tf.browser.toPixels(tensor_to_image(stylized_image), stylizedCanvas)
+            } catch (e) {   
+                alert(e)
+            }
+
+
+
+            // toPixelsPromise.then(resp => {
+            //     console.log(resp)
+            //     let imageData = new ImageData(resp, outSize)
+            //     console.log(imageData)
+
+
+            //     var ctx = stylizedCanvas.getContext("2d");
+            //     ctx.putImageData(imageData, 0, 0);
+            // })
+
+        }
+
+
+        /**
+         * 删除张量维度
+         * 
+         */
+        function tensor_to_image(t) {
+            t = t.squeeze()
+            return t
+        }
+
+        /**
+         * 加载图片为 tf 张量，并且增加维度
+         */
+        function load_img(e, outSize) {
+
+            img = tf.browser.fromPixels(e)
+
+            // img.print()
+            // console.log(img.shape)
+            img = tf.cast(img, 'float32')
+            // img.print()
+            img = img.div(255.0)
+            // img.print()
+
+            // shape = img.shape
+            // console.log(img.shape)
+
+            shape = tf.cast(img.shape, 'float32')
+
+            long_dim = tf.max(shape).dataSync()[0]
+            console.log('long_dim', long_dim)
+
+
+
+            // scale = long_dim / outSize
+            scale = outSize / long_dim
+            console.log('scale', scale)
+
+            new_shap = tf.cast(shape.mul(scale), 'int32')
+            size = new_shap.dataSync().slice(0, -1)
+
+            img = tf.image.resizeBilinear(img, size, true)
+            img = img.expandDims()
+
+            // console.log(img);
+
+            // img.print()
+            return img
+        }
+
+        function clearCanvas(c) {
+            var cxt = c.getContext("2d");
+            cxt.clearRect(0, 0, c.width, c.height);
+        }
+    </script>
+</body>
+
+</html>
