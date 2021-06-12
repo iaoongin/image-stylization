@@ -6,7 +6,15 @@
     <title>Image Stylizaton</title>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.7.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
-
+    <script>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?538dec6d044a72b8149194426d6b1288";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
     <style>
       img {
         height: 200px;
@@ -78,8 +86,8 @@
       });
     </script>
     <script>
-    //   const MODEL_URL =
-    //     "static/models/arbitrary-image-stylization-v1-256/2/model.json";
+      //   const MODEL_URL =
+      //     "static/models/arbitrary-image-stylization-v1-256/2/model.json";
       const MODEL_URL =
         "https://cdn.jsdelivr.net/gh/iaoongin/image-stylization@master/static/models/arbitrary-image-stylization-v1-256/2/model.json";
 
@@ -91,7 +99,7 @@
       console.log(MODEL_URL);
       const modelPromise = tf.loadGraphModel(MODEL_URL);
 
-      addLoading('loading model...')
+      addLoading("loading model...");
       modelPromise.then((model) => {
         // const cat = document.getElementById('cat');
         console.log("model", model);
@@ -103,12 +111,8 @@
       });
 
       function execute(model) {
-
-
-        addLoading('generating ...')
+        addLoading("generating ...");
         clearCanvas(stylizedCanvas);
-
-        
 
         setTimeout(() => {
           try {
@@ -148,7 +152,7 @@
 
       function addLoading(msg) {
         $("#execute").attr("disabled", "disabled");
-        $("#execute").html( msg || "loading...");
+        $("#execute").html(msg || "loading...");
       }
 
       function removeLoading() {
@@ -207,15 +211,5 @@
         cxt.clearRect(0, 0, c.width, c.height);
       }
     </script>
-    <script>
-      var _hmt = _hmt || [];
-      (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?538dec6d044a72b8149194426d6b1288";
-        var s = document.getElementsByTagName("script")[0]; 
-        s.parentNode.insertBefore(hm, s);
-      })();
-      </script>      
-      
   </body>
 </html>
