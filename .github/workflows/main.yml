@@ -37,7 +37,7 @@ jobs:
 
       - name:  登录阿里云Docker Registry
         run: |
-          echo ${{github.REGISTER_PASSWORD}} | docker login --username=${{github.REGISTER_USERNAME}} registry.cn-shenzhen.aliyuncs.com
+          echo ${{env.REGISTER_PASSWORD}} | docker login --username=${{env.REGISTER_USERNAME}} registry.cn-shenzhen.aliyuncs.com
 
       - name: 镜像构建
         run: |
