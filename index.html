@@ -28,213 +28,248 @@
     @media screen and (min-width: 980px) {
       .inputDiv {
         width: 100%;
-        display: flex;
-        flex-wrap: wrap;
       }
-    }
 
-    .inputDiv>div {
-      /* width: 50%; */
-      margin: 0 5px;
-    }
-
-    .inputDiv input {
-      display: block;
-    }
-  </style>
-</head>
-
-<body>
-  <div>
-    <div>
-      <h2>width</h2>
-      <input id="outSize" type="number" value="200" />
-      <button id="execute" disabled>generate</button>
-    </div>
-
-    <div class="inputDiv">
-      <div>
-        <div>
-          <h2>
-            <span>style</span>
-
-            <select id="defaultStyleSelect">
-              <option selected value="lbxx.jpg">lbxx</option>
-              <option value="scream.png">scream</option>
-              <option value="Vassily_Kandinsky,_1913_-_Composition_7.jpg">Vassily_Kandinsky</option>
-            </select>
-          </h2>
-        </div>
-        <img id="style" src="static/images/lbxx.jpg" />
-        <input id="input_style" type="file" />
-      </div>
-
-      <div>
-        <h2>content</h2>
-        <img id="content" src="static/images/content.jpg" />
-        <input id="input_content" type="file" />
-      </div>
-    </div>
-
-    <div>
-      <h2>stylized</h2>
-
-      <canvas id="stylizedCanvas" width="512" height="512"> </canvas>
-    </div>
-  </div>
-  <script>
-    $('input[type="file"]').change((e) => {
-      console.log(e);
-      console.log(e.target.files[0]);
-      $filePath = URL.createObjectURL(e.target.files[0]);
-      console.log($filePath);
-      console.log($(this).siblings("img"));
-      $(e.currentTarget).siblings("img").attr("src", $filePath);
-    });
-
-
-    $('#defaultStyleSelect').change((e) => {
-      console.log(e);
-      let val = $(e.target).val()
-      console.log(val);
-      $('#style').attr("src", `static/images/${val}`);
-    })
-
-    // $('#defaultStyleSelect').change((e) => {
-    //   console.log(e);
-    //   let val = $(e.target).val()
-    //   console.log(val);
-    //   $('#style').attr("src", `static/images/${val}`);
-    // })
-
-
-  </script>
-  <script>
-    //   const MODEL_URL =
-    //     "static/models/arbitrary-image-stylization-v1-256/2/model.json";
-    const MODEL_URL =
-      "https://cdn.jsdelivr.net/gh/iaoongin/image-stylization@master/static/models/arbitrary-image-stylization-v1-256/2/model.json";
-
-    const style = document.getElementById("style");
-    const content = document.getElementById("content");
-    const stylized = document.getElementById("stylized");
-    const stylizedCanvas = document.getElementById("stylizedCanvas");
-
-    console.log(MODEL_URL);
-    const modelPromise = tf.loadGraphModel(MODEL_URL);
-
-    addLoading("loading model...");
-    modelPromise.then((model) => {
-      // const cat = document.getElementById('cat');
-      console.log("model", model);
-      document
-        .getElementById("execute")
-        .addEventListener("click", (e) => execute(model));
-
-      removeLoading();
-    });
-
-    function execute(model) {
-      addLoading("generating ...");
-      clearCanvas(stylizedCanvas);
-
-      setTimeout(() => {
-        try {
-          let outSize = document.getElementById("outSize").value;
-
-          let tf_style = load_img(style, outSize);
-          let tf_content = load_img(content, outSize);
-
-          console.log("tf_style", tf_style);
-          console.log("tf_content", tf_content);
-
-          let stylized_image = model.execute([tf_style, tf_content]);
-          // stylized_image = model.execute([tf_content, tf_style, ]);
-
-          console.log("stylized_image", stylized_image);
-          let toPixelsPromise = tf.browser.toPixels(
-            tensor_to_image(stylized_image),
-            stylizedCanvas
-          );
-
-          toPixelsPromise.finally(() => removeLoading());
-        } catch (e) {
-          alert(e);
-          removeLoading();
+      @media screen and (min-width: 980px) {
+        .inputDiv {
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
         }
-      }, 100);
+      }
 
-      // toPixelsPromise.then(resp => {
-      //     console.log(resp)
-      //     let imageData = new ImageData(resp, outSize)
-      //     console.log(imageData)
+      .inputDiv > div {
+        /* width: 50%; */
+        margin: 0 5px;
+      }
 
-      //     var ctx = stylizedCanvas.getContext("2d");
-      //     ctx.putImageData(imageData, 0, 0);
+      .inputDiv input {
+        display: block;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div>
+      <div>
+        <h2>width</h2>
+        <input id="outSize" type="number" value="200" />
+        <button id="execute" disabled>generate</button>
+      </div>
+
+      <div class="inputDiv">
+        <div>
+          <div>
+            <h2>
+              <span>style</span>
+
+              <select id="defaultStyleSelect">
+                <option selected value="lbxx.jpg">lbxx</option>
+                <option value="scream.png">scream</option>
+                <option value="Vassily_Kandinsky,_1913_-_Composition_7.jpg">
+                  Vassily_Kandinsky
+                </option>
+              </select>
+            </h2>
+          </div>
+          <img id="style" src="static/images/lbxx.jpg" />
+          <input id="input_style" type="file" />
+        </div>
+
+        <div>
+          <h2>content</h2>
+          <img id="content" src="static/images/content.jpg" />
+          <input id="input_content" type="file" />
+        </div>
+      </div>
+
+      <div>
+        <h2>stylized</h2>
+
+        <canvas id="stylizedCanvas" width="512" height="512"> </canvas>
+      </div>
+    </div>
+    <script>
+
+      $('input[type="file"]').change((e) => {
+        // console.log(e);
+        // console.log(e.target.files[0]);
+        let file = e.target.files[0]
+
+
+        new Compressor(file, {
+          quality: 0.2,
+          success(result) {
+            // const formData = new FormData();
+
+            $filePath = URL.createObjectURL(result);
+            console.log($filePath);
+            console.log($(this).siblings("img"));
+            $(e.currentTarget).siblings("img").attr("src", $filePath);
+          },
+          error(err) {
+            console.log(err.message);
+          },
+        });
+      })
+
+
+      $("#defaultStyleSelect").change((e) => {
+        console.log(e);
+        let val = $(e.target).val();
+        console.log(val);
+        $("#style").attr("src", `static/images/${val}`);
+      });
+
+      // $('#defaultStyleSelect').change((e) => {
+      //   console.log(e);
+      //   let val = $(e.target).val()
+      //   console.log(val);
+      //   $('#style').attr("src", `static/images/${val}`);
       // })
-    }
 
-    function addLoading(msg) {
-      $("#execute").attr("disabled", "disabled");
-      $("#execute").html(msg || "loading...");
-    }
+      function setSize() {
+        let isMobile = window.matchMedia("(max-width: 980px)").matches;
+        if (isMobile) {
+          $("#stylizedCanvas").attr("width", 256);
+          $("#stylizedCanvas").attr("height", 256);
+        }
+      }
 
-    function removeLoading() {
-      $("#execute").removeAttr("disabled");
-      $("#execute").html("generate");
-    }
+      setSize();
+      window.onresize = () => {
+        return (() => {
+          // window.screenWidth = document.body.clientWidth;
+          // that.screenWidth = window.screenWidth;
+          setSize();
+        })();
+      };
+    </script>
+    <script>
+      //   const MODEL_URL =
+      //     "static/models/arbitrary-image-stylization-v1-256/2/model.json";
+      const MODEL_URL =
+        "https://cdn.jsdelivr.net/gh/iaoongin/image-stylization@master/static/models/arbitrary-image-stylization-v1-256/2/model.json";
 
-    /**
-     * 删除张量维度
-     *
-     */
-    function tensor_to_image(t) {
-      t = t.squeeze();
-      return t;
-    }
+      const style = document.getElementById("style");
+      const content = document.getElementById("content");
+      const stylized = document.getElementById("stylized");
+      const stylizedCanvas = document.getElementById("stylizedCanvas");
 
-    /**
-     * 加载图片为 tf 张量，并且增加维度
-     */
-    function load_img(e, outSize) {
-      img = tf.browser.fromPixels(e);
+      console.log(MODEL_URL);
+      const modelPromise = tf.loadGraphModel(MODEL_URL);
 
-      // img.print()
-      // console.log(img.shape)
-      img = tf.cast(img, "float32");
-      // img.print()
-      img = img.div(255.0);
-      // img.print()
+      addLoading("loading model...");
+      modelPromise.then((model) => {
+        // const cat = document.getElementById('cat');
+        console.log("model", model);
+        document
+          .getElementById("execute")
+          .addEventListener("click", (e) => execute(model));
 
-      // shape = img.shape
-      // console.log(img.shape)
+        removeLoading();
+      });
 
-      shape = tf.cast(img.shape, "float32");
+      function execute(model) {
+        addLoading("generating ...");
+        clearCanvas(stylizedCanvas);
 
-      long_dim = tf.max(shape).dataSync()[0];
-      console.log("long_dim", long_dim);
+        setTimeout(() => {
+          try {
+            let outSize = document.getElementById("outSize").value;
 
-      // scale = long_dim / outSize
-      scale = outSize / long_dim;
-      console.log("scale", scale);
+            let tf_style = load_img(style, outSize);
+            let tf_content = load_img(content, outSize);
 
-      new_shap = tf.cast(shape.mul(scale), "int32");
-      size = new_shap.dataSync().slice(0, -1);
+            console.log("tf_style", tf_style);
+            console.log("tf_content", tf_content);
 
-      img = tf.image.resizeBilinear(img, size, true);
-      img = img.expandDims();
+            let stylized_image = model.execute([tf_style, tf_content]);
+            // stylized_image = model.execute([tf_content, tf_style, ]);
 
-      // console.log(img);
+            console.log("stylized_image", stylized_image);
+            let toPixelsPromise = tf.browser.toPixels(
+              tensor_to_image(stylized_image),
+              stylizedCanvas
+            );
 
-      // img.print()
-      return img;
-    }
+            toPixelsPromise.finally(() => removeLoading());
+          } catch (e) {
+            alert(e);
+            removeLoading();
+          }
+        }, 100);
 
-    function clearCanvas(c) {
-      var cxt = c.getContext("2d");
-      cxt.clearRect(0, 0, c.width, c.height);
-    }
-  </script>
-</body>
+        // toPixelsPromise.then(resp => {
+        //     console.log(resp)
+        //     let imageData = new ImageData(resp, outSize)
+        //     console.log(imageData)
 
+        //     var ctx = stylizedCanvas.getContext("2d");
+        //     ctx.putImageData(imageData, 0, 0);
+        // })
+      }
+
+      function addLoading(msg) {
+        $("#execute").attr("disabled", "disabled");
+        $("#execute").html(msg || "loading...");
+      }
+
+      function removeLoading() {
+        $("#execute").removeAttr("disabled");
+        $("#execute").html("generate");
+      }
+
+      /**
+       * 删除张量维度
+       *
+       */
+      function tensor_to_image(t) {
+        t = t.squeeze();
+        return t;
+      }
+
+      /**
+       * 加载图片为 tf 张量，并且增加维度
+       */
+      function load_img(e, outSize) {
+        img = tf.browser.fromPixels(e);
+
+        // img.print()
+        // console.log(img.shape)
+        img = tf.cast(img, "float32");
+        // img.print()
+        img = img.div(255.0);
+        // img.print()
+
+        // shape = img.shape
+        // console.log(img.shape)
+
+        shape = tf.cast(img.shape, "float32");
+
+        long_dim = tf.max(shape).dataSync()[0];
+        console.log("long_dim", long_dim);
+
+        // scale = long_dim / outSize
+        scale = outSize / long_dim;
+        console.log("scale", scale);
+
+        new_shap = tf.cast(shape.mul(scale), "int32");
+        size = new_shap.dataSync().slice(0, -1);
+
+        img = tf.image.resizeBilinear(img, size, true);
+        img = img.expandDims();
+
+        // console.log(img);
+
+        // img.print()
+        return img;
+      }
+
+      function clearCanvas(c) {
+        var cxt = c.getContext("2d");
+        cxt.clearRect(0, 0, c.width, c.height);
+      }
+    </script>
+  </body>
 </html>
