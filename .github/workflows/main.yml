@@ -41,13 +41,13 @@ jobs:
         uses: aliyun/acr-login@v1
         with:
           # Container registry username
-          # username: ${{ github.REGISTER_ID }}
+          username: ${{ github.REGISTER_USERNAME }}
           # Container registry password
-          # password: ${{ github.REGISTER_SECRET }}
+          password: ${{ github.REGISTER_PASSWORD }}
           # Access key id
-          access-key-id: ${{ env.REGISTER_ID }} # optional, default is 
+          # access-key-id: ${{ env.REGISTER_ID }} # optional, default is 
           # Access key secret
-          access-key-secret: ${{ env.REGISTER_SECRET }} # optional, default is 
+          # access-key-secret: ${{ env.REGISTER_SECRET }} # optional, default is 
           # Region id
           region-id: cn-shenzhen # optional, default is cn-hangzhou
           # Registry instance id
