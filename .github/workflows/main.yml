@@ -45,9 +45,9 @@ jobs:
           # Container registry password
           # password: ${{ github.REGISTER_SECRET }}
           # Access key id
-          access-key-id: ${{ github.REGISTER_ID }} # optional, default is 
+          access-key-id: ${{ env.REGISTER_ID }} # optional, default is 
           # Access key secret
-          access-key-secret: ${{ github.REGISTER_SECRET }} # optional, default is 
+          access-key-secret: ${{ env.REGISTER_SECRET }} # optional, default is 
           # Region id
           region-id: cn-shenzhen # optional, default is cn-hangzhou
           # Registry instance id
