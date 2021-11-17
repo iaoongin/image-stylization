@@ -40,9 +40,9 @@ jobs:
         uses: aliyun/acr-login@v1
         with:
           # Container registry username
-          username: ${{ REGISTER_ID }}
+          username: ${{ github.REGISTER_ID }}
           # Container registry password
-          password: ${{ REGISTER_SECRET }}
+          password: ${{ github.REGISTER_SECRET }}
           # Access key id
 #           access-key-id: # optional, default is 
           # Access key secret
