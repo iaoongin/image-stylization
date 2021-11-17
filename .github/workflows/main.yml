@@ -4,6 +4,8 @@ env:
   image_name: image-stylization
   namespace: yffjglcms
   register_server: registry.cn-shenzhen.aliyuncs.com
+  REGISTER_USERNAME: ${{env.REGISTER_USERNAME}}
+  REGISTER_PASSWORD: ${{env.REGISTER_PASSWORD}}
   
   
 name: CI
@@ -37,7 +39,7 @@ jobs:
 
       - name:  登录阿里云Docker Registry
         run: |
-          echo ${{env.REGISTER_PASSWORD}} | docker login --username=${{env.REGISTER_USERNAME}} registry.cn-shenzhen.aliyuncs.com
+          echo $REGISTER_PASSWORD | docker login --username=$REGISTER_USERNAME registry.cn-shenzhen.aliyuncs.com
 
       - name: 镜像构建
         run: |
