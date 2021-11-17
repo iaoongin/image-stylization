@@ -51,13 +51,13 @@ jobs:
           # Region id
           region-id: cn-shenzhen # optional, default is cn-hangzhou
           # Registry instance id
-          instance-id: ${{namespace}}/${{imag_name}} # optional, default is 
+          instance-id: ${{env.namespace}}/${{env.imag_name}} # optional, default is 
           # Container registry server url
-          login-server: ${{register_server}} # default is 
+          login-server: ${{env.register_server}} # default is 
             # Runs a set of commands using the runners shell
       - name: 构建镜像
         run: |
-          docker build -t ${{namespace}}/${{imag_name}}:${{tag}} -t ${{register_server}}/${{namespace}}/${{imag_name}}:${{tag}} .
+          docker build -t ${{env.namespace}}/${{env.imag_name}}:${{env.tag}} -t ${{env.register_server}}/${{env.namespace}}/${{env.imag_name}}:${{env.tag}} .
       - name: 将镜像推送到Registry
         run: |
-          docker push ${{register_server}}/${{namespace}}/${{imag_name}}:${{tag}}
+          docker push ${{env.register_server}}/${{env.namespace}}/${{env.imag_name}}:${{env.tag}}
