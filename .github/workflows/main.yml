@@ -36,24 +36,26 @@ jobs:
       - name: 开始
         run: |
           echo Hello, world!
-          echo ${{env.REGISTER_USERNAME}}
 
 #       - name:  登录阿里云Docker Registry
 #         run: |
 #           echo ${{env.REGISTER_PASSWORD}} | docker login --username=${{env.REGISTER_USERNAME}} registry.cn-shenzhen.aliyuncs.com
 
-      - name: Login to Aliyun Container Registry (ACR)
+      - name: Login to ACR
         uses: aliyun/acr-login@v1
         with:
-          login-server: https://registry.cn-shenzhen.aliyuncs.com
-          region-id: cn-shenzhen
-          username: "${{ secrets.REGISTER_USERNAME }}"
-          password: "${{ secrets.REGISTER_PASSWORD }}"
-
-      - name: 镜像构建
+          login-server: https://${{env.register_server}}
+          username: "${{ secrets.REGISTRY_USERNAME }}"
+          password: "${{ secrets.REGISTRY_PASSWORD }}"
+      - name: Build and push image
         run: |
-          docker build -t ${{env.namespace}}/${{env.image_name}}:${{env.tag}} -t ${{env.register_server}}/${{env.namespace}}/${{env.image_name}}:${{env.tag}} .
-      
-      - name: 将镜像推送到Registry
-        run: |
+          docker build -t ${{env.register_server}}/${{env.namespace}}/${{env.image_name}}:${{env.tag}} .
           docker push ${{env.register_server}}/${{env.namespace}}/${{env.image_name}}:${{env.tag}}
+
+#       - name: 镜像构建
+#         run: |
+#           docker build -t ${{env.namespace}}/${{env.image_name}}:${{env.tag}} -t ${{env.register_server}}/${{env.namespace}}/${{env.image_name}}:${{env.tag}} .
+      
+#       - name: 将镜像推送到Registry
+#         run: |
+#           docker push ${{env.register_server}}/${{env.namespace}}/${{env.image_name}}:${{env.tag}}
