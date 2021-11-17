@@ -38,9 +38,17 @@ jobs:
           echo Hello, world!
           echo ${{env.REGISTER_USERNAME}}
 
-      - name:  登录阿里云Docker Registry
-        run: |
-          echo ${{env.REGISTER_PASSWORD}} | docker login --username=${{env.REGISTER_USERNAME}} registry.cn-shenzhen.aliyuncs.com
+#       - name:  登录阿里云Docker Registry
+#         run: |
+#           echo ${{env.REGISTER_PASSWORD}} | docker login --username=${{env.REGISTER_USERNAME}} registry.cn-shenzhen.aliyuncs.com
+
+      - name: Login to Aliyun Container Registry (ACR)
+        uses: aliyun/acr-login@v1
+        with:
+          login-server: https://registry.cn-shenzhen.aliyuncs.com
+          region-id: cn-shenzhen
+          username: "${{ secrets.REGISTER_USERNAME }}"
+          password: "${{ secrets.REGISTER_PASSWORD }}"
 
       - name: 镜像构建
         run: |
