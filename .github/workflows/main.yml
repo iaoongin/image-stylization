@@ -1,5 +1,12 @@
 # This is a basic workflow to help you get started with Actions
-
+env:
+  tag: latest
+  image_name: image-stylization
+  namespace: yffjglcms
+  register_server: registry.cn-shenzhen.aliyuncs.com
+  REGISTER_USERNAME: ${{ secrets.REGISTER_USERNAME }}
+  REGISTER_PASSWORD: ${{ secrets.REGISTER_PASSWORD }}
+  
 name: CI
 
 # Controls when the workflow will run
@@ -26,30 +33,29 @@ jobs:
       - uses: actions/checkout@v2
 
       # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: 开始
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
-      - name: Alibaba Cloud Container Registry (ACR) Login
-        # You may pin to the exact commit or the version.
-        # uses: aliyun/acr-login@8f767fdbf27e81327587352ff253c682b8d70f6d
+          echo Hello, world!
+
+#       - name:  登录阿里云Docker Registry
+#         run: |
+#           echo ${{env.REGISTER_PASSWORD}} | docker login --username=${{env.REGISTER_USERNAME}} registry.cn-shenzhen.aliyuncs.com
+
+      - name: Login to ACR
         uses: aliyun/acr-login@v1
         with:
-          # Container registry username
-          username: ${{ github.REGISTER_ID }}
-          # Container registry password
-          password: ${{ github.REGISTER_SECRET }}
-          # Access key id
-#           access-key-id: # optional, default is 
-          # Access key secret
-#           access-key-secret: # optional, default is 
-          # Region id
-          region-id: cn-shenzhen # optional, default is cn-hangzhou
-          # Registry instance id
-          instance-id: yffjglcms/image-stylization # optional, default is 
-          # Container registry server url
-          login-server: registry.cn-shenzhen.aliyuncs.com # default is 
+          login-server: https://${{env.register_server}}
+          username: "${{ secrets.REGISTRY_USERNAME }}"
+          password: "${{ secrets.REGISTRY_PASSWORD }}"
+      - name: Build and push image
+        run: |
+          docker build -t ${{env.register_server}}/${{env.namespace}}/${{env.image_name}}:${{env.tag}} .
+          docker push ${{env.register_server}}/${{env.namespace}}/${{env.image_name}}:${{env.tag}}
+
+#       - name: 镜像构建
+#         run: |
+#           docker build -t ${{env.namespace}}/${{env.image_name}}:${{env.tag}} -t ${{env.register_server}}/${{env.namespace}}/${{env.image_name}}:${{env.tag}} .
+      
+#       - name: 将镜像推送到Registry
+#         run: |
+#           docker push ${{env.register_server}}/${{env.namespace}}/${{env.image_name}}:${{env.tag}}
